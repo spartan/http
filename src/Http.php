@@ -2,7 +2,9 @@
 
 namespace Spartan\Http;
 
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Spartan\Http\Exception\HttpBadRequest;
@@ -45,6 +47,27 @@ class Http
         501 => HttpNotImplemented::class,
         503 => HttpServiceUnavailable::class,
     ];
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param ClientInterface|null   $client
+     *
+     * @return ResponseInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws \ReflectionException
+     * @throws \Spartan\Service\Exception\ContainerException
+     * @throws \Spartan\Service\Exception\NotFoundException
+     */
+    public static function send(string $method, $uri, array $headers = [], $body = null): ResponseInterface
+    {
+        $client  = container()->get(ClientInterface::class);
+        $request = container()->get(ServerRequestFactoryInterface::class)->createServerRequest($method, $uri);
+        $request = self::request($request)->withHeaders($headers)->withParsedBody($body);
+
+        return $client->sendRequest($request);
+    }
 
     /**
      * @param mixed   $url
@@ -127,7 +150,7 @@ class Http
      * @param mixed      $condition
      * @param mixed      $message
      */
-    public static function throw($exceptionClass, $condition, $message = null): void
+    public static function throw($exceptionClass, $condition = false, $message = null): void
     {
         if ($condition instanceof \Closure) {
             $condition = $condition();
