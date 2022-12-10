@@ -1,4 +1,11 @@
 # Changelog
+### [0.1.3](https://github.com/spartan/http/compare/v0.1.2...v0.1.3) (2022-12-10)
+
+
+### Changes
+
+* upgrade guzzle client to version 7 ([dd41ecc](https://github.com/spartan/http/commit/dd41ecc30abcc0dd4fee3f4d479375aefcf0b284))
+
 ### [0.1.2](https://github.com/spartan/http/compare/v0.1.1...v0.1.2) (2021-12-14)
 
 
